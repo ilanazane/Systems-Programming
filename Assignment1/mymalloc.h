@@ -13,5 +13,4 @@ typedef struct Metadata {
 
 void* mymalloc(size_t size);
 Metadata getMetadata(int index);
-int checkIfMetadata();
 void myfree(void* ptr);

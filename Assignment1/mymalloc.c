@@ -1,12 +1,13 @@
 #include "mymalloc.h"
 
 void* mymalloc(size_t size) {
+
     int block_size = 4096;
     int metadata_size = 2;
     int new_ptr_size = (int) size;
 
     if (new_ptr_size > block_size - metadata_size || new_ptr_size == 0) {
-        printf("Malloc Error A: Saturation of dynamic memory on line %d of file \"/s\"\n", __LINE__, __FILE__);
+        printf("Malloc() Error: Saturation of dynamic memory on line %d of file \"/s\"\n", __LINE__, __FILE__);
         return NULL;
     }
     int i = 0; char data; char byte1; char byte2;
@@ -49,11 +50,12 @@ void* mymalloc(size_t size) {
         }
     }
     // End of array reached
-    printf("Malloc Error A: Saturation of dynamic memory on line %d of file \"/s\"\n", __LINE__, __FILE__);
+    printf("Malloc() Error: Saturation of dynamic memory on line %d of file \"/s\"\n", __LINE__, __FILE__);
     return NULL;
 }
 
 Metadata getMetadata(int index) {
+
     Metadata metadata;
 
     char byte1 = myblock[index];
@@ -65,9 +67,40 @@ Metadata getMetadata(int index) {
     metadata.is_in_use = (byte1 >> 7) & 1;
     metadata.pointer_size = (byte1 & 127) * 100 + byte2;
 
-    if (metadata.pointer_size > 4094 || (byte1 & 127) > byte1_limit || byte2 > byte2_limit) {
+    if (metadata.pointer_size > 4094 || (byte1 & 127) > byte1_limit || byte2 > byte2_limit || byte2 < 0) {
         metadata.pointer_size = 0;
         metadata.is_in_use = 0;
     }
     return metadata;
+}
+
+void myfree(void* ptr) {
+
+    int index = ((char*) ptr - myblock) / sizeof(char);
+    int metadata_size = 2; int block_size = 4096;
+
+    if (index > block_size - metadata_size || index < 0 || (ptr < block_size && ptr > 0)) {
+        printf("Free() Error: Address out of bounds on line %d of file \"/s\"\n", __LINE__, __FILE__);
+        ptr = NULL;
+        return;
+    }
+
+    Metadata metadata = getMetadata(index);
+
+    if (!metadata.is_in_use) {
+        printf("Free() Error: Freeing unallocated pointer on line %d of file \"/s\"\n", __LINE__, __FILE__);
+        ptr = NULL;
+        return;
+    }
+    // Clearing metadata
+    myblock[index] = 0;
+    myblock[index + 1] = 0;
+    index += metadata_size;
+
+    int i;
+    for (i = index; i < metadata.pointer_size + index; i++) {
+        // Clearing data
+        myblock[i] = 0;
+    }
+    ptr = NULL;
 }
