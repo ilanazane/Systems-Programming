@@ -14,23 +14,23 @@ int caseB;
 int caseC; 
 int caseD; 
 
-int i; 
-int j; 
+int x; 
+int y; 
 
 int* array[50];
 
 struct timeval start; 
 struct timeval finish; 
 	//CASE A: malloc 1 byte and immediately free it- do this 150 times 
-	for(j=0;j<150;j++){
+	for(y=0;y<150;y++){
 	gettimeofday(&start,0); 
-		for(i=0;i<50;i++){
-			array[i]=(int*)malloc(1); 
-			myfree(array[i]); 
-			array[i]=NULL;
+		for(x=0;x<50;x++){
+			array[x]=(int*)malloc(1); 
+			myfree(array[x]); 
+			array[x]=NULL;
 		}
 	gettimeofday(&finish,0); 
-	caseA=caseA+((finish.tv_sec-start.tv_sec)*1000000 + (finish.tv_usec-start.tv_usec)); 
+	caseA+=(finish.tv_sec-start.tv_sec)*1000000 + (finish.tv_usec-start.tv_usec); 
 	
 	}
 	//printf("A %d", caseA/100); 
@@ -39,17 +39,17 @@ struct timeval finish;
 //CASE B: malloc 1 byte and store in array- do this 150 times 
 //once you've malloced 50 bytes, free each one, one by one 
 
-	for(j=0;j<150;j++){
+	for(y=0;y<150;y++){
 		gettimeofday(&start,0); 
-			for(i=0;i<50;i++){
-				array[i]=(int*)malloc(1); 
+			for(x=0;x<50;x++){
+				array[x]=(int*)malloc(1); 
 			}
-				for(i=0;i<50;i++){
-					myfree(array[i]); 
-					array[i]=NULL; 
+				for(x=0;x<50;x++){
+					myfree(array[x]); 
+					array[x]=NULL; 
 				}	
 	gettimeofday(&finish,0);
-	caseB=caseB+((finish.tv_sec-start.tv_sec)*1000000 + (finish.tv_usec-start.tv_usec));
+	caseB+=(finish.tv_sec-start.tv_sec)*1000000 + (finish.tv_usec-start.tv_usec);
 	}
 
 
@@ -60,7 +60,7 @@ int numFrees=0;
 int mallORfree= 0+rand()%2;  
 
 
-	for(j=0;j<100;j++){
+	for(y=0;y<100;y++){
 		gettimeofday(&start,0); 
 		srand(time(NULL)); 
 		while(numAllocs<50){
@@ -83,7 +83,7 @@ int mallORfree= 0+rand()%2;
 		mallORfree=0+rand()%2; 
 		
 	gettimeofday(&finish,0); 
-	caseC= caseC+((finish.tv_sec-start.tv_sec)*1000000 + (finish.tv_usec-start.tv_usec));
+	caseC+=(finish.tv_sec-start.tv_sec)*1000000 + (finish.tv_usec-start.tv_usec);
 	}//end of for loop 
 
 
@@ -96,7 +96,7 @@ int mallORfree= 0+rand()%2;
 //int mallORfree=0+rand()%2; 
 int randomBytes= 1+rand()%65;	
 	
-	for(j=0;j<100;j++){
+	for(y=0;y<100;y++){
 		gettimeofday(&start,0); 
 		srand(time(NULL));
 
@@ -118,14 +118,14 @@ int randomBytes= 1+rand()%65;
 			numFrees++; 
 			
 		}
-		for(i=numFrees;i<50;i++){
-			myfree(array[i]);
-			array[i]=NULL;
+		for(x=numFrees;x<50;x++){
+			myfree(array[x]);
+			array[x]=NULL;
 		}
 		
 		
 	gettimeofday(&finish,0); 
-	caseD= caseD+((finish.tv_sec-start.tv_sec) + (finish.tv_usec-start.tv_usec));
+	caseD+=(finish.tv_sec-start.tv_sec) + (finish.tv_usec-start.tv_usec);
 	}
 
 
