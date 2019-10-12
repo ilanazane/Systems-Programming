@@ -59,6 +59,7 @@ int numMallocs=0;
 int numFrees=0; 
 int mallORfree= 0+rand()%2;  
 
+
 	for(j=0;j<100;j++){
 		gettimeofday(&start,0); 
 		srand(time(NULL)); 
@@ -69,13 +70,73 @@ int mallORfree= 0+rand()%2;
 				numMallocs++; 
 				numAllocs++; 
 			}else{
-				myfree(array[numMallocs]);
-				array[numMallocs]=NULL; 
+				myfree(array[numFrees]);
+				array[numFrees]=NULL; 
 				numFrees++; 
 			}		
 		}//end of while loop 
+		if(mallORfree==0){
+				myfree(array[numFrees]); 
+				array[numFrees]=NULL; 
+				numFrees++; 
+			}
+		mallORfree=0+rand()%2; 
+		
+	gettimeofday(&finish,0); 
+	caseC= caseC+((finish.tv_sec-start.tv_sec)*1000000 + (finish.tv_usec-start.tv_usec));
 	}//end of for loop 
+
+
+//CASE D: randomly choose between 1-64 byte malloc or free 
+
+//int numAllocs=0; 
+//int numMallocs=0; 
+//int numFrees=0; 
+
+//int mallORfree=0+rand()%2; 
+int randomBytes= 1+rand()%65;	
+	
+	for(j=0;j<100;j++){
+		gettimeofday(&start,0); 
+		srand(time(NULL));
+
+		while(numAllocs<50){
+			if(mallORfree==1){
+				array[numMallocs]=(int*)malloc(1); 
+			}if(!array[numMallocs]==NULL){
+				numMallocs++; 
+				numAllocs++; 
+			}else{
+				myfree(array[numFrees]);
+				array[numFrees]=NULL; 
+				numFrees++; 
+			}		
+		}//end of while loop 
+		if(mallORfree==0){
+			myfree(array[numFrees]); 
+			array[numFrees]=NULL; 
+			numFrees++; 
+			
+		}
+		for(i=numFrees;i<50;i++){
+			myfree(array[i]);
+			array[i]=NULL;
+		}
+		
+		
+	gettimeofday(&finish,0); 
+	caseD= caseD+((finish.tv_sec-start.tv_sec) + (finish.tv_usec-start.tv_usec));
+	}
 
 
 	printf("A %d\n",caseA/100); 
 	printf("B %d\n",caseB/100); 
+	printf("C %d\n",caseC/100); 
+	printf("D %u\n",caseD/100); 
+
+
+
+
+
+return 0; 
+}
