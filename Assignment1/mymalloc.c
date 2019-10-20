@@ -1,13 +1,13 @@
 #include "mymalloc.h"
 
-void* mymalloc(size_t size) {
+void* mymalloc(size_t size, const char* file, const char* line) {
 
     int block_size = 4096;
     int metadata_size = 2;
     int new_ptr_size = (int) size;
 
     if (new_ptr_size > block_size - metadata_size || new_ptr_size == 0) {
-        printf("Malloc() Error: Saturation of dynamic memory on line %d of file \"/s\"\n", __LINE__, __FILE__);
+        printf("Malloc() Error: Saturation of dynamic memory on line %d of file \"%s\"\n", line, file);
         return NULL;
     }
     int i = 0; char data; char byte1; char byte2;
@@ -50,7 +50,7 @@ void* mymalloc(size_t size) {
         }
     }
     // End of array reached
-    printf("Malloc() Error: Saturation of dynamic memory on line %d of file \"/s\"\n", __LINE__, __FILE__);
+    printf("Malloc() Error: Saturation of dynamic memory on line %d of file \"%s\"\n", line, file);
     return NULL;
 }
 
@@ -74,13 +74,13 @@ Metadata getMetadata(int index) {
     return metadata;
 }
 
-void myfree(void* ptr) {
+void myfree(void* ptr, const char* file, const char* line) {
 
     int index = ((char*) ptr - myblock) / sizeof(char);
     int metadata_size = 2; int block_size = 4096;
 
     if (index > block_size - metadata_size || index < 0 || (ptr < block_size && ptr > 0)) {
-        printf("Free() Error: Address out of bounds on line %d of file \"/s\"\n", __LINE__, __FILE__);
+        printf("Free() Error: Address out of bounds on line %d of file \"%s\"\n", line, file);
         ptr = NULL;
         return;
     }
@@ -88,7 +88,7 @@ void myfree(void* ptr) {
     Metadata metadata = getMetadata(index);
 
     if (!metadata.is_in_use) {
-        printf("Free() Error: Freeing unallocated pointer on line %d of file \"/s\"\n", __LINE__, __FILE__);
+        printf("Free() Error: Freeing unallocated pointer on line %d of file \"%s\"\n", line, file);
         ptr = NULL;
         return;
     }
