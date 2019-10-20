@@ -11,6 +11,6 @@ typedef struct Metadata {
     int pointer_size;
 } Metadata;
 
-void* mymalloc(size_t size);
+void* mymalloc(size_t size, const char* file, const char* line);
 Metadata getMetadata(int index);
-void myfree(void* ptr);
+void myfree(void* ptr, const char* file, const char* line);
