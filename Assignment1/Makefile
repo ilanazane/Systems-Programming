@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -g
+CFLAGS = -g -Wall
 DEPS = mymalloc.h
 OBJ = mymalloc.o memgrind.o
 
