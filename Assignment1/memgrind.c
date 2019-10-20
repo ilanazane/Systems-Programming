@@ -9,134 +9,181 @@
 
 int main(){
 
-int caseA; 
-int caseB; 
-int caseC; 
-int caseD; 
+	int caseA = 0; 
+	int caseB = 0; 
+	int caseC = 0; 
+	int caseD = 0; 
+	int caseE = 0;
+	int caseF = 0;
 
-int x; 
-int y; 
+	int x; 
+	int y; 
 
-int* array[50];
+	int* ptrArray[150];
+	char* strArray[60];
 
-struct timeval start; 
-struct timeval finish; 
-	//CASE A: malloc 1 byte and immediately free it- do this 150 times 
-	for(y=0;y<150;y++){
-	gettimeofday(&start,0); 
-		for(x=0;x<50;x++){
-			array[x]=(int*)malloc(1); 
-			myfree(array[x]); 
-			array[x]=NULL;
+	struct timeval start;
+	struct timeval finish;
+
+
+	//CASE A: malloc 1 byte and immediately free it- do this 150 times
+
+	gettimeofday(&start,0);
+
+	for (y = 0; y < 100; y++) {
+		 
+		for(x = 0; x < 150; x++){
+			ptrArray[x]= (int*) malloc(1); 
+			free(ptrArray[x]);
 		}
-	gettimeofday(&finish,0); 
-	caseA+=(finish.tv_sec-start.tv_sec)*1000000 + (finish.tv_usec-start.tv_usec); 
-	
 	}
-	//printf("A %d", caseA/100); 
 
+	gettimeofday(&finish,0); 
+	caseA += (finish.tv_sec-start.tv_sec)*1000000 + (finish.tv_usec-start.tv_usec); 
+	
 
-//CASE B: malloc 1 byte and store in array- do this 150 times 
-//once you've malloced 50 bytes, free each one, one by one 
+	//CASE B: malloc 1 byte and store in ptrArray- do this 150 times 
+	//once you've malloced 50 bytes, free each one, one by one 
 
-	for(y=0;y<150;y++){
-		gettimeofday(&start,0); 
-			for(x=0;x<50;x++){
-				array[x]=(int*)malloc(1); 
+	int z;
+	gettimeofday(&start,0);
+
+	for (y = 0; y < 100; y++) {
+		
+		for(z = 0; z < 3; z++){
+			 
+			for(x = 0; x < 50; x++){
+				ptrArray[x]=(int*)malloc(1); 
 			}
-				for(x=0;x<50;x++){
-					myfree(array[x]); 
-					array[x]=NULL; 
-				}	
+			for(x = 0; x < 50; x++){
+				free(ptrArray[x]);
+			}
+		}
+	}
+
 	gettimeofday(&finish,0);
-	caseB+=(finish.tv_sec-start.tv_sec)*1000000 + (finish.tv_usec-start.tv_usec);
-	}
+	caseB += (finish.tv_sec-start.tv_sec)*1000000 + (finish.tv_usec-start.tv_usec);
 
 
-//CASE C: randomly malloc or free 
-int numAllocs=0;
-int numMallocs=0; 
-int numFrees=0; 
-int mallORfree= 0+rand()%2;  
+	//CASE C: Randomly malloc or free until 50 malloc calls.
+	int numMallocCalls = 0;
+	int numPtrs = 0;
+	srand(time(NULL));
+	int doMalloc = rand() & 1;
 
+	gettimeofday(&start,0); 
 
-	for(y=0;y<100;y++){
-		gettimeofday(&start,0); 
-		srand(time(NULL)); 
-		while(numAllocs<50){
-			if(mallORfree==1){
-				array[numMallocs]=(int*)malloc(1); 
-			}if(!array[numMallocs]==NULL){
-				numMallocs++; 
-				numAllocs++; 
-			}else{
-				myfree(array[numFrees]);
-				array[numFrees]=NULL; 
-				numFrees++; 
-			}		
-		}//end of while loop 
-		if(mallORfree==0){
-				myfree(array[numFrees]); 
-				array[numFrees]=NULL; 
-				numFrees++; 
+	for (y = 0; y < 100; y++) {
+		while (numMallocCalls < 50){
+			if (doMalloc){
+				ptrArray[numPtrs] = (int*) malloc(1);
+				numPtrs++;
+				numMallocCalls++;
+			} else if (numPtrs > 0){
+				free(ptrArray[--numPtrs]);
 			}
-		mallORfree=0+rand()%2; 
-		
-	gettimeofday(&finish,0); 
-	caseC+=(finish.tv_sec-start.tv_sec)*1000000 + (finish.tv_usec-start.tv_usec);
-	}//end of for loop 
-
-
-//CASE D: randomly choose between 1-64 byte malloc or free 
-
-//int numAllocs=0; 
-//int numMallocs=0; 
-//int numFrees=0; 
-
-//int mallORfree=0+rand()%2; 
-int randomBytes= 1+rand()%65;	
-	
-	for(y=0;y<100;y++){
-		gettimeofday(&start,0); 
-		srand(time(NULL));
-
-		while(numAllocs<50){
-			if(mallORfree==1){
-				array[numMallocs]=(int*)malloc(1); 
-			}if(!array[numMallocs]==NULL){
-				numMallocs++; 
-				numAllocs++; 
-			}else{
-				myfree(array[numFrees]);
-				array[numFrees]=NULL; 
-				numFrees++; 
-			}		
-		}//end of while loop 
-		if(mallORfree==0){
-			myfree(array[numFrees]); 
-			array[numFrees]=NULL; 
-			numFrees++; 
-			
+			doMalloc = rand() & 1;
 		}
-		for(x=numFrees;x<50;x++){
-			myfree(array[x]);
-			array[x]=NULL;
+		while (numPtrs > 0)	{
+			free(ptrArray[--numPtrs]);
 		}
-		
-		
-	gettimeofday(&finish,0); 
-	caseD+=(finish.tv_sec-start.tv_sec) + (finish.tv_usec-start.tv_usec);
 	}
 
-
-	printf("A %d\n",caseA/100); 
-	printf("B %d\n",caseB/100); 
-	printf("C %d\n",caseC/100); 
-	printf("D %u\n",caseD/100); 
+	gettimeofday(&finish,0); 
+	caseC += (finish.tv_sec - start.tv_sec)*1000000 + (finish.tv_usec - start.tv_usec);
 
 
+	//CASE D: randomly choose between 1-64 byte malloc or free 
+
+	numMallocCalls = 0;
+	numPtrs = 0;
+	srand(time(NULL));
+	doMalloc = rand() & 1;
+	int ptrSize = rand() % 65;
+	
+	gettimeofday(&start,0);
+
+	for (y = 0; y < 100; y++) {
+		
+		while (numMallocCalls < 50){
+			if (doMalloc){
+				ptrArray[numPtrs] = (int*) malloc(ptrSize);
+				numPtrs++;
+				numMallocCalls++;
+			} else if (numPtrs > 0){
+				free(ptrArray[--numPtrs]);
+			}
+			doMalloc = rand() & 1;
+		}
+		while (numPtrs > 0)	{
+			free(ptrArray[--numPtrs]);
+		} 
+	}
+
+	gettimeofday(&finish,0); 
+	caseD += (finish.tv_sec - start.tv_sec)*1000000 + (finish.tv_usec - start.tv_usec);
+
+
+	// CASE E: Storing strings in the malloc'd pointers and immediately freeing those pointers.
+	
+	int i; int j;
+	char* inputStr = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+
+	gettimeofday(&start, 0);
+
+	for (y = 0; y < 100; y++) {
+		for (i = 0; i < 50; i++) {
+			char* ptrE = (char*) malloc(60);
+			j = 0;
+			do {
+				ptrE[j] = inputStr[j];
+				j++;
+			} while (inputStr[j - 1] != '\0');
+		
+			free(ptrE); 
+		}
+	}
+
+	gettimeofday(&finish,0); 
+	caseE += (finish.tv_sec-start.tv_sec)*1000000 + (finish.tv_usec-start.tv_usec);	
 
 
 
-return 0; 
+
+	// CASE F: Storing strings in the malloc'd pointers and freeing all those pointers at once at the end.
+
+
+
+	int k;
+	char* tempAddress;
+	
+	gettimeofday(&start, 0);
+
+	for (y = 0; y < 100; y++) {
+		for (i = 0; i < 50; i++) {
+			strArray[i] = (char*) malloc(60);
+			j = 0;
+			do {
+				tempAddress = (char *) (strArray[i]) + j;
+				*tempAddress = inputStr[j];
+				j++;
+			} while (inputStr[j - 1] != '\0');
+		}
+		for (k = 0; k < 50; k++) {
+			free(strArray[k]);
+		}
+	}
+
+	gettimeofday(&finish,0); 
+	caseF += (finish.tv_sec - start.tv_sec)*1000000 + (finish.tv_usec - start.tv_usec); 
+
+
+	printf("A %d microseconds\n", caseA/100);
+	printf("B %d microseconds\n", caseB/100);
+	printf("C %d microseconds\n", caseC/100);
+	printf("D %d microseconds\n", caseD/100);
+	printf("E %d microseconds\n", caseE/100);
+	printf("F %d microseconds\n", caseF/100);
+
+	return 0; 
 }

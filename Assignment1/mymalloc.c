@@ -1,6 +1,6 @@
 #include "mymalloc.h"
 
-void* mymalloc(size_t size, const char* file, const char* line) {
+void* mymalloc(size_t size, char* file, int line) {
 
     int block_size = 4096;
     int metadata_size = 2;
@@ -10,17 +10,17 @@ void* mymalloc(size_t size, const char* file, const char* line) {
         printf("Malloc() Error: Saturation of dynamic memory on line %d of file \"%s\"\n", line, file);
         return NULL;
     }
-    int i = 0; char data; char byte1; char byte2;
+    int i = 2; 
+    char byte1; char byte2;
 
-    for (i = 1; i < block_size - metadata_size; i++) {
-        data = myblock[i];
-        // static arrays are zero-initialized in C
-        if (data == 0) {
+    while (i < block_size) {
+        Metadata metadata = getMetadata(i);
+        // static arrays are always zero-initialized, allowing predictable behavior
+        if (!metadata.is_in_use) {
             // Set Metadata
-            byte1 = ((char)(new_ptr_size / 100)) & -127;
+            byte1 = ((char)(new_ptr_size / 100)) | -128;
             byte2 = (char)(new_ptr_size % 100);
 
-            i += 2;
             int return_index = i; int j; int is_too_small = 0;
 
             for (j = i; j < (new_ptr_size + return_index); j++) {
@@ -37,16 +37,8 @@ void* mymalloc(size_t size, const char* file, const char* line) {
                 return (void*) &myblock[return_index];
             }
             
-        } else if (data < 0) {
-            Metadata metadata = getMetadata(i);
-            if (metadata.pointer_size == 0) {
-                // Do nothing, go to next iteration
-            } else {
-                i += metadata.pointer_size + metadata_size;
-            }
-
         } else {
-            // Do nothing, go to next iteration
+            i += metadata.pointer_size + metadata_size;
         }
     }
     // End of array reached
@@ -54,32 +46,36 @@ void* mymalloc(size_t size, const char* file, const char* line) {
     return NULL;
 }
 
-Metadata getMetadata(int index) {
-
+Metadata getMetadata(int ptrIndex) {
+    int metadata_size = 2;
+    int index = ptrIndex - metadata_size;
     Metadata metadata;
 
     char byte1 = myblock[index];
     char byte2 = myblock[index + 1];
 
-    int byte1_limit = (4094 - index) % 100;
+    int byte1_limit = (4094 - index) / 100;
     int byte2_limit = 99;
 
     metadata.is_in_use = (byte1 >> 7) & 1;
     metadata.pointer_size = (byte1 & 127) * 100 + byte2;
 
     if (metadata.pointer_size > 4094 || (byte1 & 127) > byte1_limit || byte2 > byte2_limit || byte2 < 0) {
-        metadata.pointer_size = 0;
+
         metadata.is_in_use = 0;
+        metadata.pointer_size = 0;
+
     }
+
     return metadata;
 }
 
-void myfree(void* ptr, const char* file, const char* line) {
+void myfree(void* ptr, char* file, int line) {
 
     int index = ((char*) ptr - myblock) / sizeof(char);
-    int metadata_size = 2; int block_size = 4096;
+    int block_size = 4096;
 
-    if (index > block_size - metadata_size || index < 0 || (ptr < block_size && ptr > 0)) {
+    if (index >= block_size || index < 2 || ((uintptr_t) ptr < block_size && ptr > 0)) {
         printf("Free() Error: Address out of bounds on line %d of file \"%s\"\n", line, file);
         ptr = NULL;
         return;
@@ -93,9 +89,8 @@ void myfree(void* ptr, const char* file, const char* line) {
         return;
     }
     // Clearing metadata
-    myblock[index] = 0;
-    myblock[index + 1] = 0;
-    index += metadata_size;
+    myblock[index - 2] = 0;
+    myblock[index - 1] = 0;
 
     int i;
     for (i = index; i < metadata.pointer_size + index; i++) {
