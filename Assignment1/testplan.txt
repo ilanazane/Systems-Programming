@@ -1,0 +1,15 @@
+Case E (Done 100 times):
+    Calls malloc(60), uses the returned pointer to insert a ~60 char string into the myblock array, 
+        and then immediately frees the pointer.
+    This is done 50 times for each iteration of the test case.
+
+Case F (Done 100 times):
+    Calls malloc(60) and uses the returned pointer to insert a ~60 char string into the myblock array.
+        This is done 50 times to fill up almost the entirety of the array with data.
+    Then, the fifty 60 byte strings are freed one by one.
+
+
+
+Reason these test cases were chosen:
+    None of the given test cases actually put any data into the static myblock array, 
+        so we thought that these test cases could give a more accurate simulation of main memory.

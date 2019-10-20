@@ -178,12 +178,12 @@ int main(){
 	caseF += (finish.tv_sec - start.tv_sec)*1000000 + (finish.tv_usec - start.tv_usec); 
 
 
-	printf("A %d microseconds\n", caseA/100);
-	printf("B %d microseconds\n", caseB/100);
-	printf("C %d microseconds\n", caseC/100);
-	printf("D %d microseconds\n", caseD/100);
-	printf("E %d microseconds\n", caseE/100);
-	printf("F %d microseconds\n", caseF/100);
+	printf("A %.2f microseconds\n", caseA/100.0);
+	printf("B %.2f microseconds\n", caseB/100.0);
+	printf("C %.2f microseconds\n", caseC/100.0);
+	printf("D %.2f microseconds\n", caseD/100.0);
+	printf("E %.2f microseconds\n", caseE/100.0);
+	printf("F %.2f microseconds\n", caseF/100.0);
 
 	return 0; 
 }
