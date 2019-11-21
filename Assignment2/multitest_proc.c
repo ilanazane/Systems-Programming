@@ -6,7 +6,7 @@
 #include <sys/wait.h> 
 #include "multitest.h"
 
-int multiProc(int** array, int numToFind){
+int multiSearch(int** array, int numToFind){
 
 
 	//pid_t pid=fork(); 
