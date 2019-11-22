@@ -2,11 +2,12 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include "multitest.h"
 
 void swap(int*, int*);
 void printArray(int*, int);
 void randomize(int*, int);
-int arraySearch(int**, int);
+// int arraySearch(int**, int);
 
 void swap(int* a, int* b){
   int temp=*a;
@@ -33,7 +34,7 @@ void randomize(int arr[],int n){
 }
 
 int main(int argc, char** argv){
-  int arrayLength = 20001;
+  int arrayLength = 200001;
   int numToFind = 50;
 
   int* array = (int*) malloc(arrayLength * sizeof(int));
@@ -45,13 +46,24 @@ int main(int argc, char** argv){
 
   randomize(array, arrayLength);
 
-  int foundIndex = arraySearch(&array, numToFind);
-  
+  // find index for answer verification
+  int a;
+  for (a = 0; a < arrayLength; a++) {
+    if (array[a] == numToFind) {
+      printf("answer = %d\n", a);
+      answer = a;
+    }
+      
+  }
+
+  int foundIndex = arraySearch(&array, arrayLength, numToFind);
+
+  // printf("%d\n", foundIndex);
   free(array);
   return 0;
 }
 
-int arraySearch(int ** array, int numToFind) {
-  // Do nothing
-  return 0;
-}
+// int arraySearch(int ** array, int numToFind) {
+//   // Do nothing
+//   return 0;
+// }

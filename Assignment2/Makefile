@@ -20,5 +20,4 @@ thread: $(OBJT)
 .PHONY: clean
 
 clean:
-	rm -rf proc *.o
-	rm -rf thread *.o
+	rm -rf proc thread *.o

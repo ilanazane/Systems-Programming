@@ -2,14 +2,15 @@
 #include <stdio.h>
 #include <pthread.h>
 
-#define NUM_THREADS 10
+#define NUM_THREADS 15
 
-#define arraySearch(x, y) multiSearch(x, y)
+#define arraySearch(x, y, z) multiSearch(x, y, z)
+
+int answer;
 
 typedef struct threadSearch_args {
-    int* array;
+    int** _array;
     int thread_num;
     int numToFind;
+    int arrayLength;
 }argt;
-
-int multiSearch(int**, int);

@@ -6,6 +6,9 @@
 #include <sys/wait.h> 
 #include "multitest.h"
 
+int multiSearch(int**, int);
+int pSearch(int*, int, int, int, int, int)
+
 int multiSearch(int** array, int numToFind){
 
 
