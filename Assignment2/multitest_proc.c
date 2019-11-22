@@ -6,32 +6,25 @@
 #include <sys/wait.h> 
 #include "multitest.h"
 
-int multiSearch(int**, int);
-int pSearch(int*, int, int, int, int, int)
+ int multiSearch(int**,int,int); 
 
-int multiSearch(int** array, int numToFind){
+ int pSearch(int*, int, int , int , int , int,int );  
 
-
-	//pid_t pid=fork(); 
-	int size=sizeof(array)/sizeof(array[0]); 
-	double groups =size/250; 
-	//printf("groups: %lf",groups);
-	double loggroups= log(80.0)/log(2); 
-	double numOfForks=  ceil(loggroups); 
-	//printf("loggroups: %lf",numOfForks); 
-
-
-	//pSearch(arr,0,20000,0,250,key); 
-	
-	printf("%d\n",pSearch(array,0,20000,0,250,numToFind));  
+ int  multiSearch(int** array,int arrayLength, int numToFind){  
 	
 
-  //return 0;
+	int final=pSearch(*array,arrayLength,0,arrayLength-1,0,250,numToFind);  
+	exit(0);  
+	printf("final: %d",final);
+	
+
+  return 0;
 }
 
-int pSearch(int* array,int startIndex, int endIndex, int currentLevel, int maxSize,int numToFind) { 
+int pSearch(int* array,int arrayLength,int startIndex, int endIndex, int currentLevel, int maxSize,int numToFind) { 
 	int status; 
-	if (endIndex - startIndex > maxSize) { 
+	
+	if (arrayLength - 1 - startIndex > maxSize) { 
 
 		pid_t pid = fork();
  
@@ -40,22 +33,28 @@ int pSearch(int* array,int startIndex, int endIndex, int currentLevel, int maxSi
 		if (pid ==0){
  			pid= wait(&status);
 			int newEndIndex = endIndex - newChunkSize;  
-			pSearch(array, startIndex, newEndIndex, ++currentLevel, maxSize,numToFind);
-			wait(NULL);  
+			pSearch(array, arrayLength, startIndex, newEndIndex, ++currentLevel, maxSize, numToFind);
+			  
 
 		} else {
 			int newStartIndex = startIndex + newChunkSize;
-
-			pSearch(array, newStartIndex, endIndex, ++currentLevel, maxSize,numToFind);
-			wait(NULL); 
+			int newEndIndex = newStartIndex + newChunkSize;
+			pSearch(array, arrayLength, newStartIndex, endIndex, ++currentLevel, maxSize, numToFind);
+			
 		}
 	}
 	int i=0;
 	for(i=startIndex;i<endIndex;i++){
 		if(array[i]==numToFind){
-			//printf("%d\t",i);   
-			return i; 
-			 //wait(NULL); 
-		}
+			//exit(0); 
+			printf("here: %d\t",i);
+			break;
+			//return i; 
+			  
+		}   
+		
+
 	}
+
+	return i; 
 }
