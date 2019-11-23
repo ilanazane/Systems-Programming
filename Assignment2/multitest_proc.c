@@ -9,8 +9,7 @@ int multiSearch(int**,int,int);
 
 int multiSearch(int** _array,int arrayLength, int numToFind){  
 	int i = 0; int j; int k;
-    double maxSize = 250;
-    int numProcesses = ceil(((double)arrayLength)/maxSize);
+    int numProcesses = ceil(((double)arrayLength)/((double)maxSize));
     int chunkSize = ceil(((double)arrayLength)/((double)numProcesses));
     int multiplier = 0;
     int startIndex = 0;

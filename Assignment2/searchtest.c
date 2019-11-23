@@ -36,6 +36,8 @@ void randomize(int arr[],int n){
 int main(int argc, char** argv){
   int arrayLength = 2001;
   int numToFind = 50;
+  numThreads = 50;
+  maxSize = 250;
 
   printf("Multi-mode = %s\n", (argv[0]) + 2);
 
