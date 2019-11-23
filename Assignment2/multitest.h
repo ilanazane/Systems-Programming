@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <pthread.h>
 
-#define NUM_THREADS 15
+#define NUM_THREADS 50
 
 #define arraySearch(x, y, z) multiSearch(x, y, z)
 

@@ -12,6 +12,7 @@ all:
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 proc: $(OBJP)
+	ulimit -u 1999
 	$(CC) -o $@ $^ $(CFLAGS)
 
 thread: $(OBJT)

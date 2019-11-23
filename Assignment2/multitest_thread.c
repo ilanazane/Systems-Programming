@@ -6,16 +6,17 @@ void* threadedSearch(void*);
 int multiSearch(int** _array, int arrayLength, int numToFind) {
     pthread_t* threads = (pthread_t*) malloc((NUM_THREADS) * sizeof(pthread_t));
 
-    argt threadArgs;
-    threadArgs._array = _array;
-    threadArgs.numToFind = numToFind;
-    threadArgs.arrayLength = arrayLength;
-    
+    argt* arglist[NUM_THREADS];
 
     int i; int j;
     for (i = 0; i < NUM_THREADS; i++) {
-        threadArgs.thread_num = i;
-        pthread_create(&threads[i], NULL, &threadedSearch, (void*) (&threadArgs));
+        argt* threadArgs = malloc(sizeof(argt));
+        threadArgs->_array = _array;
+        threadArgs->numToFind = numToFind;
+        threadArgs->arrayLength = arrayLength;
+        threadArgs->thread_num = i;
+        arglist[i] = threadArgs;
+        pthread_create(&threads[i], NULL, &threadedSearch, (void*) arglist[i]);
     }
     int ret;
     void* foundIndex = -1;
@@ -38,19 +39,20 @@ int multiSearch(int** _array, int arrayLength, int numToFind) {
 
 void* threadedSearch(void* args) {
     int* array = (*((argt*) args)->_array);
-    int threadNum = ((argt*) args)->thread_num - 5;
+    int threadNum = ((argt*) args)->thread_num;
     int numToFind = ((argt*) args)->numToFind;
     int arrayLength = ((argt*) args)->arrayLength;
 
-    int chunkSize = arrayLength/(NUM_THREADS-5);
+    int chunkSize = arrayLength/NUM_THREADS;
     int startIndex = chunkSize*threadNum;
     int endIndex = chunkSize*(threadNum + 1);
 
     if (threadNum == NUM_THREADS - 1) {
         endIndex = arrayLength;
-    } else if (threadNum < 0) {
-        pthread_exit((void*)-1);
-    }
+    } 
+    // else if (threadNum < 0) {
+    //     pthread_exit((void*)-1);
+    // }
     
     // printf("thread %d startI = %d\n", threadNum, startIndex);
     // printf("thread %d endI = %d", threadNum, endIndex);

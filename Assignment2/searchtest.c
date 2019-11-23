@@ -34,8 +34,10 @@ void randomize(int arr[],int n){
 }
 
 int main(int argc, char** argv){
-  int arrayLength = 200001;
+  int arrayLength = 2001;
   int numToFind = 50;
+
+  printf("Multi-mode = %s\n", (argv[0]) + 2);
 
   int* array = (int*) malloc(arrayLength * sizeof(int));
   
@@ -57,8 +59,7 @@ int main(int argc, char** argv){
   }
 
   int foundIndex = arraySearch(&array, arrayLength, numToFind);
-
-  // printf("%d\n", foundIndex);
+  // printf("findex = %d\n", foundIndex);
   free(array);
   return 0;
 }

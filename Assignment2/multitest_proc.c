@@ -1,60 +1,52 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
 #include <unistd.h> 
 #include <math.h> 
 #include <sys/wait.h> 
 #include "multitest.h"
 
- int multiSearch(int**,int,int); 
+int multiSearch(int**,int,int); 
 
- int pSearch(int*, int, int , int , int , int,int );  
+// int pSearch(int*, int, int , int , int , int,int ); 
 
- int  multiSearch(int** array,int arrayLength, int numToFind){  
-	
+int multiSearch(int** _array,int arrayLength, int numToFind){  
+	int i = 0; int j; int k;
+    double maxSize = 250;
+    int numProcesses = ceil(((double)arrayLength)/maxSize);
+    int chunkSize = ceil(((double)arrayLength)/((double)numProcesses));
+    int multiplier = 0;
+    int startIndex = 0;
+    int endIndex = chunkSize;
+    int* array = *_array;
+    int status;
+    // int first = fork();
+    int children[numProcesses];
 
-	int final=pSearch(*array,arrayLength,0,arrayLength-1,0,250,numToFind);  
-	exit(0);  
-	printf("final: %d",final);
-	
+    for (i = 0; i < numProcesses; i++) {
+        children[i] = fork();
+        if (children[i] == 0) {
+            multiplier = i;
+            startIndex += (chunkSize*multiplier);
+            endIndex += (chunkSize*multiplier);
 
-  return 0;
-}
+            for (j = startIndex; j < endIndex; j++) {
+                if (array[j] == numToFind) {
+                    printf("FOUND AT: %d\n", j);
+                    return j;
+                    // exit(j - startIndex);
+                }
+            }
+            exit(251);
+        } else {
+            waitpid(children[i], &status, 0);
+            return -1;
+            // int returned = 251;
+            // if (WIFEXITED(status))
+            //     returned = WEXITSTATUS(&status);
+            // if (returned < 251) {
+            //     printf("return: %d\n", (returned + (i*chunkSize)));
+            //     return (returned + (i*chunkSize));
+            // }
+        }
 
-int pSearch(int* array,int arrayLength,int startIndex, int endIndex, int currentLevel, int maxSize,int numToFind) { 
-	int status; 
-	
-	if (arrayLength - 1 - startIndex > maxSize) { 
-
-		pid_t pid = fork();
- 
-		int newChunkSize = (endIndex - startIndex) / 2;
-
-		if (pid ==0){
- 			pid= wait(&status);
-			int newEndIndex = endIndex - newChunkSize;  
-			pSearch(array, arrayLength, startIndex, newEndIndex, ++currentLevel, maxSize, numToFind);
-			  
-
-		} else {
-			int newStartIndex = startIndex + newChunkSize;
-			int newEndIndex = newStartIndex + newChunkSize;
-			pSearch(array, arrayLength, newStartIndex, endIndex, ++currentLevel, maxSize, numToFind);
-			
-		}
-	}
-	int i=0;
-	for(i=startIndex;i<endIndex;i++){
-		if(array[i]==numToFind){
-			//exit(0); 
-			printf("here: %d\t",i);
-			break;
-			//return i; 
-			  
-		}   
-		
-
-	}
-
-	return i; 
+    }
+       
 }
