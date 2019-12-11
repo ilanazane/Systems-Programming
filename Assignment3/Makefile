@@ -1,10 +1,11 @@
 CC = gcc
-CFLAGS = -g -Wall -lm
+CFLAGS = -g -Wall -lm -lpthread -lnsl
 SS = DUMBserve.c
 SC = DUMBclient.c
 
 all:
-	$(CC) -c -o $@ $< $(CFLAGS)
+	make serve
+	make client
 
 serve:
 	$(CC) -o DUMBserve $(SS) $(CFLAGS)
